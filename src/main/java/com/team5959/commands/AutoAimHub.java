@@ -72,7 +72,13 @@ import com.team5959.subsystems.SwerveChassis;
     xSpeed = modifyAxis(xSpeed); 
     ySpeed = modifyAxis(ySpeed); 
 
-    swerveChassis.driveWithHeadingHold(xSpeed, ySpeed, RotateToHub, fieldOriented);//FIXME SI NO FUNCIONA EL HOLDING REGRESAR A METODO DRIVE
+    swerveChassis.driveWithHeadingHold(
+      (xSpeed/2), 
+      (ySpeed/2), 
+      RotateToHub, 
+      fieldOriented
+    );
+    //FIXME SI NO FUNCIONA EL HOLDING REGRESAR A METODO DRIVE
 
     /*    
     if (fieldOriented) {
