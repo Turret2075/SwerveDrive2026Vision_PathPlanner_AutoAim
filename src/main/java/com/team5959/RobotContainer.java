@@ -29,6 +29,9 @@ import com.team5959.subsystems.PhotonVisionSubsystem;
 import com.team5959.subsystems.ShooterSubsystem;
 import com.team5959.subsystems.SwerveChassis;
 import com.team5959.subsystems.IntakeSubsystem;
+import com.team5959.commands.AutoAimHub;
+import com.team5959.commands.AutoAimPassLeft;
+import com.team5959.commands.AutoAimPassRight;
 import com.team5959.commands.AutoShooterStartCmd;
 import com.team5959.commands.AutoShooterStopCmd;
 import com.team5959.commands.ClimberHoldPosition;
@@ -184,6 +187,9 @@ public class RobotContainer {
     Drivercontrol.cross().onTrue(new IntakeLowPosition(intake)); // mientras presionado
     Drivercontrol.triangle().onTrue(new IntakeInitialPosition(intake)); // al soltar
     Drivercontrol.circle().onTrue(new IntakeMidPosition(intake)); // mientras presionado
+    Drivercontrol.L1().whileTrue(new AutoAimHub(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
+    Drivercontrol.L2().whileTrue(new AutoAimPassLeft(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
+    Drivercontrol.R2().whileTrue(new AutoAimPassRight(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
     Drivercontrol.square().toggleOnTrue(new StartEndCommand(() -> intake.setRollerPIDSpeed(5200), () -> intake.stopRollerMotor(), intake)); 
     Drivercontrol.R1().toggleOnTrue(new StartEndCommand(() -> intake.setRollerPIDSpeed(-5200), () -> intake.stopRollerMotor(), intake)); 
     
