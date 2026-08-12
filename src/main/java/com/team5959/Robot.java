@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 // Importa la clase CommandScheduler, que se encarga de gestionar la ejecución de comandos.
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import org.ironmaple.simulation.SimulatedArena;
+
 import edu.wpi.first.cameraserver.CameraServer; //web cam
 import edu.wpi.first.cscore.UsbCamera;
 
@@ -163,5 +165,6 @@ public class Robot extends TimedRobot {
   /** Esta función se llama periódicamente mientras está en simulación. */
   @Override
   public void simulationPeriodic() {
+    if (Constants.ShouldKillRoboRio) SimulatedArena.getInstance().simulationPeriodic();
   }
 }

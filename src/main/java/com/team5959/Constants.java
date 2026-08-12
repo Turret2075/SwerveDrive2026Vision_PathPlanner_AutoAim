@@ -33,6 +33,11 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 //30 CanRange
 
 public class Constants {
+  
+  //Boolean que activa simulacion de MapleSim
+  public static final boolean ShouldKillRoboRio = true;    
+
+
     public static class ControllerConstants {
         public static final int kDriverControllerPort = 0;
         public static final int kOperatorControllerPort = 1;
@@ -193,7 +198,7 @@ public class Constants {
                 new TrapezoidProfile.Constraints(
                   Math.toRadians(180), Math.toRadians(360));
 
-        
+            
       }
     }
     
