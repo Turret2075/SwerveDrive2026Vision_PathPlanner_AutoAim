@@ -94,14 +94,17 @@ public class MapleSwerve extends SubsystemBase{
 
   }
 
-  public void driveMaple(Translation2d translation, double rotation, boolean fieldOriented, boolean isOpenLoop){
-    this.simulatedChassis.runChassisSpeeds(
-      new ChassisSpeeds(translation.getX(), translation.getY(), rotation), 
-      new Translation2d(), 
-      fieldOriented, 
-      true);
-  }
+public void driveMaple(double xSpeed, double ySpeed, double omega, boolean fieldOriented) {
+      ChassisSpeeds speeds;
+      if (fieldOriented) {
+          speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, omega, getRotation2d());
+      } else {
+          speeds = new ChassisSpeeds(xSpeed, ySpeed, omega);
+      }
 
+      // CORRECCIÓN CLAVE: El segundo parámetro DEBE ser "new Pose2d()" para que gire en su propio eje
+      simulatedChassis.runChassisSpeeds(speeds, new Translation2d(), false, false);
+  }
     //DRIVE
   public void drive(double xSpeed, double ySpeed, double zSpeed, boolean fieldOriented){
     SwerveModuleState[] states;
@@ -138,7 +141,7 @@ public class MapleSwerve extends SubsystemBase{
     }
 
     public Rotation2d getRotation2d() {
-      return simulatedChassis.getRawGyroAngle();
+      return simulatedChassis.getOdometryEstimatedPose().getRotation();
     }
 
 
@@ -194,7 +197,7 @@ public class MapleSwerve extends SubsystemBase{
   
           double currentHeadingDeg = getRotation2d().getDegrees();
           double pidOutput = headingPID.calculate(currentHeadingDeg, headingSetpointDeg);
-          pidOutput = Math.max(-1.0, Math.min(1.0, pidOutput));
+          pidOutput = Math.max(-SwerveConstants.MAX_ROTATION, Math.min(SwerveConstants.MAX_ROTATION, pidOutput));
           omega = pidOutput;
       } else {
           // joystick Z manda
@@ -204,11 +207,23 @@ public class MapleSwerve extends SubsystemBase{
   
       wasRotating = rotatingNow;
   
-      drive(xSpeed, ySpeed, omega, fieldOriented);
+      driveMaple(xSpeed, ySpeed, omega, fieldOriented);
   }
 
   public void periodic() {
-    // This method will be called once per scheduler run
+    // update the odometry of the SimplifedSwerveSimulation instance
+        simulatedChassis.periodic();
+
+        // send simulation data to dashboard for testing
+        simField2d.setRobotPose(simulatedChassis.getActualPoseInSimulationWorld());
+        simField2d.getObject("odometry").setPose(getPose());
+        SmartDashboard.putData("MapleField", simField2d);
+  }
+
+  @Override
+  public void simulationPeriodic() {
+      // ¡ESTO ES LO QUE HACE QUE LA FÍSICA Y LAS LLANTAS SE MUEVAN!
+      SimulatedArena.getInstance().simulationPeriodic();
   }
 
     /* * * ADDED METHODS * * */

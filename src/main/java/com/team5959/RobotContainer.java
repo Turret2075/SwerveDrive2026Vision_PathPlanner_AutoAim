@@ -25,6 +25,7 @@ import com.pathplanner.lib.events.PointTowardsZoneTrigger;
 import com.team5959.Constants.ControllerConstants;
 import com.team5959.subsystems.ClimberSubsystem;
 import com.team5959.subsystems.LedsSubsystem;
+import com.team5959.subsystems.MapleSwerve;
 import com.team5959.subsystems.PhotonVisionSubsystem;
 import com.team5959.subsystems.ShooterSubsystem;
 import com.team5959.subsystems.SwerveChassis;
@@ -49,6 +50,10 @@ import com.team5959.commands.ShooterStopCmd;
 import com.team5959.commands.SwerveDriveJoystickCmd;
 import com.team5959.commands.SwerveDriveXLockCmd;
 import com.team5959.commands.setShooterManualSpeed;
+import com.team5959.commands.SimCommands.MapleSwerveDriveJoystickCmd;
+import com.team5959.commands.SimCommands.VirtualAutoAimHub;
+import com.team5959.commands.SimCommands.VirtualAutoAimPassLeft;
+import com.team5959.commands.SimCommands.VirtualAutoAimPassRight;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Joystick;
@@ -66,6 +71,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
   // Creacion de objetos de SUBSISTEMAS
   private final SwerveChassis swerveChassis = new SwerveChassis();
+  private final MapleSwerve simChassis = new MapleSwerve();
   private final ShooterSubsystem shooter = new ShooterSubsystem();
   private final ClimberSubsystem climber = new ClimberSubsystem();
   private final PhotonVisionSubsystem PhotonVisionSubsystem = new PhotonVisionSubsystem();
@@ -102,22 +108,6 @@ public class RobotContainer {
     // Registro de zonas de enfoque
     new PointTowardsZoneTrigger("Reef").whileTrue(Commands.print("Apuntando a Reef"));
 
-    // Crear un comando PathPlannerAuto usando un archivo de ruta guardado llamado
-    // "compAuto3"
-    PathPlannerAuto compAuto3Command = new PathPlannerAuto("compAuto3");
-    // PathPlannerAuto can also be created with a custom command
-    // autoCommand = new PathPlannerAuto(new CustomAutoCommand());
-
-    // Bind to different auto triggers
-    compAuto3Command.isRunning().onTrue(Commands.print("Autonomo 3 corriendo"));
-    compAuto3Command.timeElapsed(2).onTrue(Commands.print("Han pasado 2 segundos"));
-    compAuto3Command.timeRange(2, 4).whileTrue(Commands.print("entre 2 y 4 segundos"));
-    compAuto3Command.event("Prepareforscore").onTrue(Commands.print("Pasando por el evento"));
-    compAuto3Command.pointTowardsZone("Speaker").onTrue(Commands.print("Viendo al Speaker"));
-    compAuto3Command.activePath("Azul4").onTrue(Commands.print("Iniciando path 4"));
-    compAuto3Command.nearFieldPosition(new Translation2d(2, 2), 0.5).whileTrue(Commands.print("within 0.5m of (2, 2)"));
-    compAuto3Command.inFieldArea(new Translation2d(2, 2), new Translation2d(4, 4))
-        .whileTrue(Commands.print("in area of (2, 2) - (4, 4)"));
 
     // Do all other initialization
 
@@ -140,6 +130,16 @@ public class RobotContainer {
 
     // Configurar los comandos predeterminados de los subsistemas. En este caso, el
     // chasis swerve
+    if (Constants.ShouldKillRoboRio){
+      simChassis.setDefaultCommand(new MapleSwerveDriveJoystickCmd(simChassis,
+        () -> Drivercontrol.getLeftY(),
+        () -> Drivercontrol.getLeftX(),
+        () -> Drivercontrol.getRightX(),
+        true));
+
+      SimBindings();
+    }
+    else{
     swerveChassis.setDefaultCommand(new SwerveDriveJoystickCmd(swerveChassis,
         () -> Drivercontrol.getLeftY(),
         () -> Drivercontrol.getLeftX(),
@@ -153,11 +153,13 @@ public class RobotContainer {
 
     // Configure the trigger bindings method.
     configureBindings();
+    }
   }
 
   public SwerveChassis getSwerveChassis() {
     return swerveChassis;
   }
+  
 
   // Configurar los enlaces de botones para los comandos usando lambdas o
   // referencias de método
@@ -234,11 +236,13 @@ public class RobotContainer {
         },
         shooter, intake
       )
-    ); 
+    );     
+  }
 
-
-    
-    
+  private void SimBindings(){
+    Drivercontrol.triangle().whileTrue(new VirtualAutoAimHub(simChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
+    Drivercontrol.square().whileTrue(new VirtualAutoAimPassLeft(simChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
+    Drivercontrol.circle().whileTrue(new VirtualAutoAimPassRight(simChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
   }
 
   public void periodic() {

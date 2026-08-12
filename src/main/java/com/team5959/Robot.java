@@ -46,9 +46,11 @@ public class Robot extends TimedRobot {
     // de botones y colocará nuestro
     // selector de autónomo en el dashboard.
     m_robotContainer = new RobotContainer();
+    if (isReal()){
     UsbCamera camera = CameraServer.startAutomaticCapture();
     camera.setResolution(320, 240);
     camera.setFPS(15);
+    }
   }
 
   /**
@@ -165,6 +167,8 @@ public class Robot extends TimedRobot {
   /** Esta función se llama periódicamente mientras está en simulación. */
   @Override
   public void simulationPeriodic() {
-    if (Constants.ShouldKillRoboRio) SimulatedArena.getInstance().simulationPeriodic();
+    if (Constants.ShouldKillRoboRio){
+      SimulatedArena.getInstance().simulationPeriodic();
   }
+}
 }
