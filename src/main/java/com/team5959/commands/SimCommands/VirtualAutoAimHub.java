@@ -24,7 +24,7 @@ import com.team5959.subsystems.MapleSwerve;
     private DoubleSupplier xSupplier, ySupplier; 
     private boolean fieldOriented; 
 
-    private final PIDController AimingPID = new PIDController(SwerveConstants.KP_ROT_PATHPLANNER, SwerveConstants.KI_ROT_PATHPLANNER, SwerveConstants.KD_ROT_PATHPLANNER);
+    private final PIDController AimingPID = new PIDController(SwerveConstants.KP_AUTO_HOLDING, SwerveConstants.KI_AUTO_HOLDING, SwerveConstants.KD_AUTO_HOLDING);
 
       //constructor del chassis
     public VirtualAutoAimHub(

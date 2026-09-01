@@ -116,6 +116,7 @@ public class RobotContainer {
 
     // For convenience a programmer could change this when going to competition.
     boolean isCompetition = true;
+    boolean needsAutoAim = false;
 
     // Build an auto chooser. This will use Commands.none() as the default option.
     // As an example, this will only show autos that start with "comp" while at
