@@ -242,4 +242,8 @@ public class LedsSubsystem extends SubsystemBase {
   public void forceColor(int r, int g, int b) {
     sendColor(r, g, b);
   }
+
+  public void forceBlinkWithColor(double progress, int r, int g, int b) {
+    blinkWithColor(progress, r, g, b);
+  }
 }

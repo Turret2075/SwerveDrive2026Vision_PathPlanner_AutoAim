@@ -226,6 +226,7 @@ public class RobotContainer {
           shooter.setShooterPIDSpeed(4000);
           shooter.setShooterFeederSpeed(0.8);
           shooter.setShooterIndexerSpeed(0.85);
+          
         },
         () -> {
           shooter.stopShooter();
