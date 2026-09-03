@@ -13,26 +13,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * LedsSubsystem — Subsistema de control de LEDs NeoPixel vía Tejuino Board #1
  *
  * Modo DESHABILITADO : Rainbow (arcoíris), re-enviado cada segundo
+ * 
+ * Modo AUTONOMO : Envía colores del equipo.
  *
- * Modo TELEOPERADO   : Imita el estado del Hub del campo (FRC 2026)
- *   - Hub ACTIVO     → color de la alianza (rojo / azul), re-enviado cada segundo
- *   - Hub INACTIVO   → naranja, re-enviado cada segundo
- *   - Últimos 5 s del shift → parpadeo acelerado (500 ms → 80 ms) con el color activo
- *   - End-game (≤ 30 s)     → verde sólido
- *   - Últimos 10 s totales  → parpadeo verde acelerado (500 ms → 80 ms)
- *
- * Lógica del Hub 2026
- * ───────────────────
- *  El dato de juego ("R" o "B") indica qué alianza tuvo el hub INACTIVO primero.
- *  El estado del hub alterna cada 25 s durante el teleop (150 s totales):
- *
- *   Tiempo restante   Turno
- *   > 130 s           Activo (transición / inicio)
- *   130–106 s         Turno 1
- *   105–81 s          Turno 2  (invertido)
- *   80–56 s           Turno 3  (igual turno 1)
- *   55–31 s           Turno 4  (igual turno 2)
- *   ≤ 30 s            End-game → siempre verde
+ * Modo TELEOPERADO   : Este sistema no sera base al HUB, sino orientado al robot
+ *    IDLE              - Color Alianza
+ *    Aiming HUB        - YELLOW (BLINK)
+ *    Shooting ON       - YELLOW (SOLID)
+ *    Intaking ROLLER   - PURPLE (BLINK)
+ *    Outaking ROLLER   - PINK (SOLID)
+ *    Unjam shooter     - WHITE (BLINK)
+ *    Climbing Prep     - GREEN (SOLID)
+ *    Climbing Action   - CYAN (BLINK)
+ *    Reseting Climbers - MAGENTA (SOLID)
  */
 public class LedsSubsystem extends SubsystemBase {
 
@@ -51,6 +44,7 @@ public class LedsSubsystem extends SubsystemBase {
   // ──────────────────────────────────────────────────────────────────────────
   private static final int RED_R    = 255, RED_G    =   0, RED_B    =   4;
   private static final int BLUE_R   =   0, BLUE_G   =   0, BLUE_B   = 255;
+  private static final int TR_R = 125, TR_G = 0, TR_B = 50;
 
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -80,6 +74,16 @@ public class LedsSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     tickCount++;
+      if (DriverStation.isDisabled()) {
+      setRainbow();
+      return;
+    }
+
+    if (DriverStation.isAutonomousEnabled()) {
+      // Color de alianza sólido, re-enviado cada segundo
+      if (tickCount % 50 == 0) set5959Leds();
+      return;
+    }
     }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -145,5 +149,13 @@ public class LedsSubsystem extends SubsystemBase {
   
   public void setBlink(double interval, int r, int g, int b){
     blinkConstantWithColor(interval, r, g, b);
+  }
+
+  public void set5959Leds(){
+    setLED(TR_R, TR_G, TR_B);
+  }
+
+  public void setAllianceLeds(){
+    sendAllianceColor();
   }
 }
