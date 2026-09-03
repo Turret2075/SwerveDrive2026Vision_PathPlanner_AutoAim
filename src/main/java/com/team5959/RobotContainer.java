@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -148,7 +149,10 @@ public class RobotContainer {
 
         climber.setDefaultCommand(new ClimberHoldPosition(climber));
 
+        leds.setDefaultCommand(new RunCommand(leds::setIdleLeds, leds));
+
         //intake.setDefaultCommand(new IntakeHoldPosition(intake));
+      
 
 
     // Configure the trigger bindings method.
@@ -210,13 +214,14 @@ public class RobotContainer {
           shooter.setShooterPIDSpeed(-4000);
           shooter.setShooterFeederSpeed(-0.8);
           shooter.setShooterIndexerSpeed(-0.85);
+          leds.setShootingLeds();
         },
         () -> {
           shooter.stopShooter();
           shooter.stopFeeder();
           shooter.stopIndexer();
         },
-        shooter, intake
+        shooter, intake, leds
       )
     );
     
@@ -226,14 +231,14 @@ public class RobotContainer {
           shooter.setShooterPIDSpeed(4000);
           shooter.setShooterFeederSpeed(0.8);
           shooter.setShooterIndexerSpeed(0.85);
-          
+          leds.setUnjamLeds();          
         },
         () -> {
           shooter.stopShooter();
           shooter.stopFeeder();
           shooter.stopIndexer();
         },
-        shooter, intake
+        shooter, intake, leds
       )
     ); 
 

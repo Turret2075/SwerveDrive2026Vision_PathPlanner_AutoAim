@@ -46,6 +46,14 @@ public class LedsSubsystem extends SubsystemBase {
   private static final int BLUE_R   =   0, BLUE_G   =   0, BLUE_B   = 255;
   private static final int TR_R = 125, TR_G = 0, TR_B = 50;
 
+  private static final int YELLOW_R  = 255, YELLOW_G  = 255, YELLOW_B  = 0;
+  private static final int PURPLE_R  = 153, PURPLE_G  =  51, PURPLE_B  = 255;
+  private static final int PINK_R    = 255, PINK_G    =  20, PINK_B    = 147;
+  private static final int WHITE_R   = 255, WHITE_G   = 255, WHITE_B   = 255;
+  private static final int GREEN_R   =   0, GREEN_G   = 255, GREEN_B   = 0;
+  private static final int CYAN_R    =   0, CYAN_G    = 255, CYAN_B    = 255;
+  private static final int MAGENTA_R = 255, MAGENTA_G =   0, MAGENTA_B = 255;
+
 
   // ──────────────────────────────────────────────────────────────────────────
   // Parpadeo
@@ -133,22 +141,31 @@ public class LedsSubsystem extends SubsystemBase {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Métodos externos para comandos de control
+  // Métodos internos para comandos
   // ──────────────────────────────────────────────────────────────────────────
-  public void setRainbow() {
+  private void setAllRainbow() {
     for (int strip : LED_STRIPS) tejuino.rainbow_effect(strip);
   }
 
-  public void setLED(int r, int g, int b) {
+  private void setLED(int r, int g, int b) {
     sendColor(r, g, b);
   }
 
-  public void setRampedBlink(double progress, int r, int g, int b) {
+  private void setRampedBlink(double progress, int r, int g, int b) {
     blinkWithColor(progress, r, g, b);
   }
-  
-  public void setBlink(double interval, int r, int g, int b){
+
+  private void setBlink(double interval, int r, int g, int b){
     blinkConstantWithColor(interval, r, g, b);
+  }
+
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Métodos para controlar en RobotContainer
+  // ──────────────────────────────────────────────────────────────────────────
+
+  public void setRainbow(){
+    setAllRainbow();
   }
 
   public void set5959Leds(){
@@ -157,5 +174,46 @@ public class LedsSubsystem extends SubsystemBase {
 
   public void setAllianceLeds(){
     sendAllianceColor();
+  }
+
+  public void setAimingLeds(){
+    setBlink(0.5, YELLOW_R, YELLOW_G, YELLOW_B);
+  }
+
+  public void setShootingLeds(){
+    setLED(YELLOW_R, YELLOW_G, YELLOW_B);
+  }
+
+  public void setIntakingLeds(){
+    setBlink(0.5, PURPLE_R, PURPLE_G, PURPLE_B);
+  }
+
+  public void setOutakingLeds(){
+    setLED(PINK_R, PINK_G, PINK_B);
+  }
+
+  public void setUnjamLeds(){
+    setBlink(0.7, WHITE_R, WHITE_G, WHITE_B);
+  }
+
+  public void setClimbPrepLeds(){
+    setLED(GREEN_R, GREEN_G, GREEN_B);
+  }
+
+  public void setClimbingLeds(){
+    setBlink(0.35, CYAN_R, CYAN_G, CYAN_B);
+  }
+
+  public void setResetClimbersLeds(){
+    setLED(MAGENTA_R, MAGENTA_G, MAGENTA_B);
+  }
+
+  public void setIdleLeds(){
+    if (DriverStation.isFMSAttached()){
+      setAllianceLeds();
+    }
+    else{
+      set5959Leds();
+    }
   }
 }
