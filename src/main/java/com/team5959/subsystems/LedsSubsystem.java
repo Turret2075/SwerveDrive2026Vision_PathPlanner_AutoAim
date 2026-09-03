@@ -82,9 +82,6 @@ public class LedsSubsystem extends SubsystemBase {
     tickCount++;
     }
 
-
-
-
   // ──────────────────────────────────────────────────────────────────────────
   // Parpadeo con aceleración progresiva
   //   progress 0.0 = lento (BLINK_PERIOD_MAX)  /  1.0 = rápido (BLINK_PERIOD_MIN)
@@ -101,6 +98,18 @@ public class LedsSubsystem extends SubsystemBase {
     }
   }
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // Parpadeo fijo
+  // ──────────────────────────────────────────────────────────────────────────
+
+  private void blinkConstantWithColor(double interval, int r, int g, int b){
+    int periodTicks = Math.max(1, (int) Math.round(interval / 20.0));
+
+    if (tickCount % periodTicks == 0) {
+      blinkOn = !blinkOn;
+      sendColor(blinkOn ? r : 0, blinkOn ? g : 0, blinkOn ? b : 0);
+    }
+  }
 
   // ──────────────────────────────────────────────────────────────────────────
   // Helpers de envío CAN
@@ -132,5 +141,9 @@ public class LedsSubsystem extends SubsystemBase {
 
   public void setRampedBlink(double progress, int r, int g, int b) {
     blinkWithColor(progress, r, g, b);
+  }
+  
+  public void setBlink(double interval, int r, int g, int b){
+    blinkConstantWithColor(interval, r, g, b);
   }
 }
