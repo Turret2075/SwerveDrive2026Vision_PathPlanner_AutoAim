@@ -186,28 +186,48 @@ public class RobotContainer {
 
     //lockPositionButton.whileTrue(new SwerveDriveXLockCmd(swerveChassis));
 
+    // ──────────────────────────────────────────────────────────────────────────
     //Control y Botones de Driver 1 
+    // ──────────────────────────────────────────────────────────────────────────
 
+    //Intake Pivot
     Drivercontrol.cross().onTrue(new IntakeLowPosition(intake)); // mientras presionado
     Drivercontrol.triangle().onTrue(new IntakeInitialPosition(intake)); // al soltar
     Drivercontrol.circle().onTrue(new IntakeMidPosition(intake)); // mientras presionado
-    Drivercontrol.L1().whileTrue(new AutoAimHub(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
+
+    //AutoAim
+    Drivercontrol.L1().whileTrue(new AutoAimHub(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true)
+      .alongWith(new RunCommand(leds::setAimingLeds, leds)));
     Drivercontrol.L2().whileTrue(new AutoAimPassLeft(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
     Drivercontrol.R2().whileTrue(new AutoAimPassRight(swerveChassis, () -> Drivercontrol.getLeftY(),() -> Drivercontrol.getLeftX(),true));
-    Drivercontrol.square().toggleOnTrue(new StartEndCommand(() -> intake.setRollerPIDSpeed(5200), () -> intake.stopRollerMotor(), intake)); 
-    Drivercontrol.R1().toggleOnTrue(new StartEndCommand(() -> intake.setRollerPIDSpeed(-5200), () -> intake.stopRollerMotor(), intake)); 
+
+    //Intake Rollers
+    Drivercontrol.square().toggleOnTrue(new StartEndCommand(() -> intake.setRollerPIDSpeed(5200), () -> intake.stopRollerMotor(), intake)
+      .deadlineFor(new RunCommand(leds::setIntakingLeds, leds))); 
+    Drivercontrol.R1().toggleOnTrue(new StartEndCommand(() -> intake.setRollerPIDSpeed(-5200), () -> intake.stopRollerMotor(), intake)
+      .alongWith(new InstantCommand(leds::setOutakingLeds, leds)));
     
+    // ──────────────────────────────────────────────────────────────────────────
     //Control y Botones de Operador 
+    // ──────────────────────────────────────────────────────────────────────────
 
-    Operatorcontrol.L1().onTrue(new ClimberPID(climber, 70)); // mientras presionado
-    Operatorcontrol.R1().onTrue(new ClimberPID(climber, 215)); //
-    Operatorcontrol.PS().whileTrue(new ClimberHomeCmd(climber)); // mientras presionado
+    //Climber auto
+    Operatorcontrol.L1().onTrue(new ClimberPID(climber, 70)
+      .alongWith(new InstantCommand(leds::setClimbPrepLeds, leds))); // mientras presionado
+    Operatorcontrol.R1().onTrue(new ClimberPID(climber, 215)
+      .alongWith(new RunCommand(leds::setClimbingLeds, leds))); //
+    Operatorcontrol.PS().whileTrue(new ClimberHomeCmd(climber)
+      .alongWith(new InstantCommand(leds::setResetClimbersLeds, leds))); // mientras presionado
 
-    Operatorcontrol.R2().onTrue(new ClimberWithJoystick(climber, 0.8));
+    //Climber manual
+    Operatorcontrol.R2().onTrue(new ClimberWithJoystick(climber, 0.8)
+      .alongWith(new InstantCommand(leds::setClimbPrepLeds, leds)));
     Operatorcontrol.R2().onFalse(new ClimberHoldPosition(climber));
-    Operatorcontrol.L2().onTrue(new ClimberWithJoystick(climber, -0.8));
+    Operatorcontrol.L2().onTrue(new ClimberWithJoystick(climber, -0.8)
+      .alongWith(new RunCommand(leds::setClimbingLeds, leds)));
     Operatorcontrol.L2().onFalse(new ClimberHoldPosition(climber));
 
+    //Shooter shoot
     Operatorcontrol.square().toggleOnTrue(
       new StartEndCommand(
         () -> {
@@ -225,21 +245,22 @@ public class RobotContainer {
       )
     );
     
+    //Shooter unjam
     Operatorcontrol.cross().toggleOnTrue(
       new StartEndCommand(
         () -> {
           shooter.setShooterPIDSpeed(4000);
           shooter.setShooterFeederSpeed(0.8);
           shooter.setShooterIndexerSpeed(0.85);
-          leds.setUnjamLeds();          
         },
         () -> {
           shooter.stopShooter();
           shooter.stopFeeder();
           shooter.stopIndexer();
         },
-        shooter, intake, leds
+        shooter, intake
       )
+    .alongWith(new RunCommand(leds::setUnjamLeds, leds))
     ); 
 
 

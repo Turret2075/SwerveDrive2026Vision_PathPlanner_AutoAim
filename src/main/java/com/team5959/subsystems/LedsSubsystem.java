@@ -83,7 +83,7 @@ public class LedsSubsystem extends SubsystemBase {
   public void periodic() {
     tickCount++;
       if (DriverStation.isDisabled()) {
-      setRainbow();
+      if (tickCount % 50 == 0) setRainbow();
       return;
     }
 
@@ -111,7 +111,7 @@ public class LedsSubsystem extends SubsystemBase {
   }
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Parpadeo fijo
+  // Parpadeo fijo (EN MILISEGUNDOS)
   // ──────────────────────────────────────────────────────────────────────────
 
   private void blinkConstantWithColor(double interval, int r, int g, int b){
@@ -177,7 +177,7 @@ public class LedsSubsystem extends SubsystemBase {
   }
 
   public void setAimingLeds(){
-    setBlink(0.5, YELLOW_R, YELLOW_G, YELLOW_B);
+    setBlink(500, YELLOW_R, YELLOW_G, YELLOW_B);
   }
 
   public void setShootingLeds(){
@@ -185,7 +185,7 @@ public class LedsSubsystem extends SubsystemBase {
   }
 
   public void setIntakingLeds(){
-    setBlink(0.5, PURPLE_R, PURPLE_G, PURPLE_B);
+    setBlink(500, PURPLE_R, PURPLE_G, PURPLE_B);
   }
 
   public void setOutakingLeds(){
@@ -193,7 +193,7 @@ public class LedsSubsystem extends SubsystemBase {
   }
 
   public void setUnjamLeds(){
-    setBlink(0.7, WHITE_R, WHITE_G, WHITE_B);
+    setBlink(700, WHITE_R, WHITE_G, WHITE_B);
   }
 
   public void setClimbPrepLeds(){
@@ -201,7 +201,7 @@ public class LedsSubsystem extends SubsystemBase {
   }
 
   public void setClimbingLeds(){
-    setBlink(0.35, CYAN_R, CYAN_G, CYAN_B);
+    setBlink(350, CYAN_R, CYAN_G, CYAN_B);
   }
 
   public void setResetClimbersLeds(){
