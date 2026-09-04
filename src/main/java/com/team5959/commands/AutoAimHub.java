@@ -56,6 +56,8 @@ import com.team5959.subsystems.SwerveChassis;
     Translation2d myHUB = isBlue ? blueHUB : redHUB;
     Pose2d currentPose = swerveChassis.getPose2d();
 
+    AimingPID.enableContinuousInput(-180, 180);
+    
     Rotation2d AngleTarget = myHUB.minus(currentPose.getTranslation()).getAngle();
     double RotateToHub = AimingPID.calculate(currentPose.getRotation().getDegrees(), AngleTarget.getDegrees());
    

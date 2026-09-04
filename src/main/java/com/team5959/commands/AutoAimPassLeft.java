@@ -56,6 +56,8 @@ import com.team5959.subsystems.SwerveChassis;
     Translation2d myLeftAlliance = isBlue ? blueLEFTPASS : redLEFTPASS;
     Pose2d currentPose = swerveChassis.getPose2d();
 
+    AimingPID.enableContinuousInput(-180, 180);
+    
     Rotation2d AngleTarget = myLeftAlliance.minus(currentPose.getTranslation()).getAngle();
     double RotateToLeftPass = AimingPID.calculate(currentPose.getRotation().getDegrees(), AngleTarget.getDegrees());
    

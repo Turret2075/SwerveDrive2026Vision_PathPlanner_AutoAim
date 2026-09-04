@@ -56,6 +56,9 @@ import com.team5959.subsystems.MapleSwerve;
     Translation2d myRightAlliance = isBlue ? blueRIGHTPASS : redRIGHTPASS;
     Pose2d currentPose = swerveChassis.getPose();
 
+    AimingPID.enableContinuousInput(-180, 180);
+    
+
     Rotation2d AngleTarget = myRightAlliance.minus(currentPose.getTranslation()).getAngle();
     double RotateToRightPass = AimingPID.calculate(currentPose.getRotation().getDegrees(), AngleTarget.getDegrees());
    
