@@ -26,6 +26,8 @@ import com.team5959.subsystems.SwerveChassis;
 
     private final PIDController AimingPID = new PIDController(SwerveConstants.KP_AUTO_HOLDING, SwerveConstants.KI_AUTO_HOLDING, SwerveConstants.KD_AUTO_HOLDING);
 
+
+
       //constructor del chassis
     public AutoAimPassRight(
       SwerveChassis swervecChassis, 
@@ -55,6 +57,8 @@ import com.team5959.subsystems.SwerveChassis;
 
     Translation2d myRightAlliance = isBlue ? blueRIGHTPASS : redRIGHTPASS;
     Pose2d currentPose = swerveChassis.getPose2d();
+    
+    AimingPID.enableContinuousInput(-180, 180);
 
     Rotation2d AngleTarget = myRightAlliance.minus(currentPose.getTranslation()).getAngle();
     double RotateToRightPass = AimingPID.calculate(currentPose.getRotation().getDegrees(), AngleTarget.getDegrees());
